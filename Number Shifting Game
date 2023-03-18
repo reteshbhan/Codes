@@ -1,0 +1,349 @@
+#include<stdio.h>
+#include<conio.h>
+#include<string.h>
+//Learning from below code
+// system("cls");
+//srand(time(0), rand(), seed value
+//reading scan keys like arrows(up, down, left, right)
+
+int srand();int rand(); // used to generate random numbers
+void system();  // declared a function fot system("cls") used below to clear screen.
+int time();     // declared to generate a different seed every time
+int main()
+{
+    // Generating random numbers
+
+int c,i,j,k,p,q,a[4][4];      // Declarations from "Generating random numbers" code
+
+char name[15]; int f,temp,v,r,t;      // Declarations from "Shifting numbers" code
+int n;
+
+int z[4][4],tt;        // declaration for the code "Comparison with the correct matrix when all the allowed moves are over i.e. n=0"
+
+srand(time(0));     // Note the srand() is used only once & is outside any loop. Only rand() is inside the for loop.
+for(p=1;p<5;p++)        // p & i
+{
+    for(i=1;i<5;i++)   // Note that i initializes from 1
+    {
+            for(j=0;j>=0;j++)   // Loop if the below conditions are not satisfied.
+            {
+                c=rand()%20;    // Random number generator
+                if(c>0 && c<16)     // This is one small but smart step. In the earlier code, c> && c<16 was checked again and again. Instead I wrote it at only one place now.
+                {
+                    if(p==1 && i==1)
+                    {
+                        a[p-1][i-1]=c;
+                        break;  // amoeba
+                    }
+                    else
+                    {
+                        for(q=0;q<p;q++)      // q & k . This for loop is used to check the all the previous numbers with the new number generated.
+                        {
+                            if(q==p-1)      // q=p-1 only signifies if cursor is in the same line in which number has to be entered
+                            {
+                                if(i==1)
+                                {
+                                    a[p-1][i-1]=c;
+                                    break;
+                                }
+                                else
+                                {
+                                    for(k=0;k<i-1;k++)
+                                    {
+                                        if(c==a[q][k])
+                                            break;
+                                        if(c!=a[q][k] && k==i-2)
+                                        {
+                                            a[p-1][i-1]=c;
+                                            break;
+                                        }
+                                    }
+                                    if(c==a[q][k])
+                                        break;
+                                    if(c!=a[q][k] && q==p-1 && k==i-2 && i!=1)      // k==i-2 is there just to put a limit to the comparison( if c is equal to already generated numbers)
+                                        break;
+                                }
+                            }
+                            else
+                            {
+                                for(k=0;k<4;k++)
+                                {
+                                    if(c==a[q][k])
+                                        break;
+                                }
+                            }
+                            if(c==a[q][k])
+                               break;
+                        }
+                        if(q==p-1 && i==1)
+                            break;
+                        if(c!=a[q][k] && q==p-1 && k==i-2 && i!=1)
+                            break;
+                    }
+                }
+            }
+            if(p==4 && i==3)
+                break;
+            else
+            {
+                if(i==4)
+                    break;
+            }
+    }
+}
+
+
+
+    // Entering Player details
+
+    printf("Enter Player name: ");
+    fgets(name,15,stdin);
+
+
+    // to remove 'enter' from string
+    for(i=0;i<15;i++)
+    {
+        if(i==strlen(name)-1)       //Why -1? Cuz, i always runs behind by 1.
+        {
+            name[i]='\0';
+            break;
+        }
+    }
+    system("cls");
+    n=20;        // Here 4 signifies the number of moves in total
+    printf("Player = %s\t\tMoves remaining: %d",name,n);
+    printf("\n\n");
+
+    // Printing Random Numbers
+
+    a[3][3]=' ';       // This line is important to be written for the first time
+    printf("-----------------------------\n");
+    for(i=0;i<4;i++)
+    {
+       for(j=0;j<4;j++)
+       {
+           if(i==3 && j==3)
+                printf("%c     |",a[3][3]);
+           else
+           {
+               if(j==0)
+               {
+                    if(a[i][j]<10)
+                        printf("|  %d   |",a[i][j]);
+                    else
+                        printf("|  %d  |",a[i][j]);
+               }
+               else
+               {
+                    if(a[i][j]<10)
+                        printf("  %d   |",a[i][j]);
+                    else
+                        printf("  %d  |",a[i][j]);
+               }
+
+           }
+       }
+       printf("\n-----------------------------\n");
+    }
+
+
+
+
+    // Shifting numbers using arrow keys
+
+while(n!=0)     // Condition ensures that the loop will stop at n=0.
+{
+    t=1;        // Very very important for f==80. Because for f==80, the for loop runs for i runs till end. To avoid it, t=1 is written here. Also note the if condition at the end of the for loop with i. It also supports the cause. Also note in the if(f==80...........) condition, t-- is weritten for the same cause.
+    v=getch();       //Two getch's are at different positions. First one to exit the game. Both of them together to take arrow kets input.
+    if(v!='e')      // means if f is not 'e', only run the below code, other wise
+    {
+        f=getch();
+        for(i=0;i<4;i++)    // for loop to check if the present number is ' ' or not. It can be for 2-D string also.
+        {
+            for(j=0;j<4;j++)
+            {
+                if(a[i][j]==' ')   // again "if" condition to be used to match with ' '.
+                {
+                    if(f==75 /*&& a[i][j-1]!=0*/ && j!=0 && n!=0)       // here if the left arrow is pressed it will swap left. Also, note the additional condition j!=0. Imagine the ' ' is on i=0, then, *(&str[i]-1)!=0 will be invalid. Also, n!=0 acts as a counter
+                    {
+                        // swap code
+                        temp=a[i][j-1];
+                        a[i][j-1]=a[i][j];
+                        a[i][j]=temp;
+                        n--;        // here is the counter for moves remaining. Whenever a move is made, n will reduce by 1.
+                        t=1;
+                        break;      //one "break" stops all the loop.
+                    }
+                    if(f==77 /*&& a[i][j+1]!=0*/  && j!=3 && n!=0)  // here if the right arrow is pressed it will swap left. Also, note i!=3. // n!=0 acts as a counter
+                    {
+                        // swap code
+                        temp=a[i][j+1];
+                        a[i][j+1]=a[i][j];
+                        a[i][j]=temp;
+                        n--;
+                        break;
+                    }
+                    if(f==72 /*&& a[i-1][j]!=0*/ && i!=0 && n!=0)       // here if the up arrow is pressed it will swap up. Also, note the additional condition i!=0. Imagine the ' ' is on i=0, then, *(&str[i]-1)!=0 will be invalid. Also, n!=0 acts as a counter
+                    {
+                        // swap code
+                        temp=a[i-1][j];
+                        a[i-1][j]=a[i][j];
+                        a[i][j]=temp;
+                        n--;        // here is the counter for moves remaining. Whenever a move is made, n will reduce by 1.
+                        break;      //one "break" stops all the loop.
+                    }
+                    if(f==80 /*&& a[i+1][j]!=0*/ && i!=3 && n!=0)  // here if the down arrow is pressed it will swap down. Also, note i!=3. // n!=0 acts as a counter
+                    {
+                        // swap code
+                        temp=a[i+1][j];
+                        a[i+1][j]=a[i][j];
+                        a[i][j]=temp;
+                        n--;
+                        t--;
+                        break;
+                    }
+                }
+            }
+            if(f==80 && t!=1)
+                break;
+        }
+
+            printf("\n");
+            system("cls");      // function declared above int main()
+            printf("Player = %s\t\tMoves remaining: %d",name,n);
+            printf("\n\n");
+     // Printing Random Numbers
+            printf("-----------------------------\n");
+            for(i=0;i<4;i++)
+            {
+                for(j=0;j<4;j++)
+                {
+                    if(a[i][j]==' ')     // Modified code for ' '
+                    {
+                        if(j==0)
+                            printf("| %c    |",a[i][j]);
+                        else
+                            printf("%c     |",a[i][j]);
+                    }
+                    else
+                    {
+                        if(j==0)
+                        {
+                            if(a[i][j]<10)
+                                printf("|  %d   |",a[i][j]);
+                            else
+                                printf("|  %d  |",a[i][j]);
+                        }
+                        else
+                        {
+                            if(a[i][j]<10)
+                                printf("  %d   |",a[i][j]);
+                            else
+                                printf("  %d  |",a[i][j]);
+                        }
+
+                    }
+                }
+                printf("\n-----------------------------\n");
+            }
+        }
+        else
+        {
+            system("cls");
+            printf("Confirm exit? Y or N ");
+            r=getch();
+            if(r=='y')
+            {
+                printf("\n\nYou have exited the game. Thanks!\n\n");
+                break;  // to go out of while loop
+            }
+            if(r=='n')
+            {
+                system("cls");
+                printf("Player =%s\t\tMoves remaining: %d",name,n);
+                printf("\n\n");
+
+                    // Printing Random Numbers
+                printf("-----------------------------\n");
+                for(i=0;i<4;i++)        // Here 4 signifies the number of moves in total
+                {
+                    for(j=0;j<4;j++)
+                    {
+                        if(a[i][j]==' ')     // Modified code for ' '
+                        {
+                            if(j==0)
+                                printf("| %c    |",a[i][j]);
+                            else
+                                printf("%c     |",a[i][j]);
+                        }
+                        else
+                        {
+                            if(j==0)
+                            {
+                                if(a[i][j]<10)
+                                    printf("|  %d   |",a[i][j]);
+                                else
+                                    printf("|  %d  |",a[i][j]);
+                            }
+                            else
+                            {
+                                if(a[i][j]<10)
+                                    printf("  %d   |",a[i][j]);
+                                else
+                                    printf("  %d  |",a[i][j]);
+                            }
+                        }
+                    }
+                    printf("\n-----------------------------\n");
+                }
+            }
+        }
+}
+
+
+
+
+
+
+// Comparison with the correct matrix when all the allowed moves are over
+
+if(n==0)
+{
+    tt=1;
+    for(i=0;i<4;i++)        //Ideal matrix code
+    {
+        for(j=0;j<4;j++)
+        {
+            if(i==3 && j==3)
+                z[i][j]=' ';
+            else
+            {
+                z[i][j]=t;
+                tt++;
+            }
+        }
+    }
+
+    for(i=0;i<4;i++)        //Ideal matrix code
+    {
+        for(j=0;j<4;j++)
+        {
+            if( a[i][j] != z[i][j] )
+            {
+                printf("\n\n\nThis is not the right matrix. You lost!");
+                break;
+            }
+            else
+                printf("\n\n\nCONGRATULATIONS!! YOU WON!!");
+
+        }
+        if( a[i][j] != z[i][j] )
+        {
+            break;
+        }
+    }
+printf("\n\nThanks! for playing!\n\n\n");
+}
+
+getch();
+};
