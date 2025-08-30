@@ -1,7 +1,7 @@
 #include<stdio.h>
 #include<conio.h>
 #include<string.h>
-//Created before CDAC
+//Created before CDAC -  memories
 //Learning from below code
 // system("cls");
 //srand(time(0), rand(), seed value
